@@ -2,6 +2,7 @@
 
 #define CUSTOM_SETTINGS
 #define INCLUDE_SENSOR_MODULE
+#define INCLUDE_NOTIFICATION_MODULE
 #define INCLUDE_TERMINAL_MODULE
 #include <DabbleESP32.h>
 
@@ -19,14 +20,15 @@ float calibrationFactor = 4.5;
 volatile byte pulseCount;
 byte pulse1Sec = 0;
 float flowRate;
-unsigned int volume;
-unsigned long volume_total;
+unsigned int volume=0;
+unsigned long volume_total =0;
 bool cond_valvula = false;
 bool cond_iniciar = true;
 char estado = 'n';
 unsigned long volume_valvula = 1000; // escolher o volume para abrir a valvula em litros
 char menu = 's';
 bool msg_conf1 = true;
+String texto;
 
 void medir_Fluxo()
 {
@@ -49,12 +51,20 @@ void medir_Fluxo()
       Serial.print(volume_total);
       Serial.print("mL / ");
       Serial.print(volume_total / 1000);
-      Serial.println("L");
+      Serial.print("L ");
+      float porcentagem_valvula = (float(volume_total/1000)/float(volume_valvula))*100;
+      Serial.print(porcentagem_valvula);
+      Serial.println(" %");
       unsigned long tempo_msg = currentMillis - previousMillis;
       if (tempo_msg <= 200)
       {
-        String texto = "[E] Enchendo: "+ String(float(volume_total/1000))+"L - " + String(float(volume_valvula))+"L / " + String(float((volume_total/1000)/volume_valvula))+"% " + "(parar/pausar)";
+        String texto = "[E] Enchendo: "+ String(float(volume_total/1000))+"L - " + String(float(volume_valvula))+"L / " + String(float(float((volume_total/1000))/float(volume_valvula))*100)+"% " + "(parar/pausar)";
         Terminal.print(texto);
+        
+        if (static_cast<int>(porcentagem_valvula)%25 ==0 || porcentagem_valvula ==0 || (porcentagem_valvula >=90 && porcentagem_valvula <91))
+        {
+          Notification.notifyPhone("Enchimento está em: "+String(float(float((volume_total/1000))/float(volume_valvula))*100)+"%");
+        }
       }
     }
     else
@@ -90,8 +100,9 @@ void teclado()
 	{
 		char leitura = Serial.read(); 
 		if (leitura == '1'){cond_valvula = true;}
+    else if (leitura == '2'){volume_total -= 1000;}
+    else if (leitura == '3'){volume_total +=1000 ;}
 	}
-  
   switch (menu)
   {
     case 's':
@@ -105,6 +116,8 @@ void teclado()
     break;
     case 'c':
     Terminal.println("[C] Enchimento Concluido");
+    Notification.setTitle("Dosadora - Enchimento Concluido");
+    Notification.notifyPhone("Enchimento Concluido");
     menu = 's';
     break;
     case 'l':
@@ -120,7 +133,8 @@ void teclado()
       }
       else if(msg <= 999 && msg >=0)
       {
-        volume_valvula = msg;
+        volume_valvula = float(msg);
+
         menu ='q';
       }
       else if (msg <0)
@@ -141,6 +155,7 @@ void teclado()
       {
         msg_conf1 = true;
         cond_valvula = true; 
+        Notification.setTitle("Dosadora - Enchimento em Andamento");
         menu ='n';
       }
       else if (Terminal.compareString("n"))
@@ -204,6 +219,8 @@ void setup()
 {
   Serial.begin(115200);
   Dabble.begin("Dosadora"); 
+  Notification.clear(); 
+  Notification.setTitle("Dosadora");
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(SENSOR, INPUT_PULLUP);
 
