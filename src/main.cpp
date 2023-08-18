@@ -10,7 +10,7 @@
 #define SENSOR  27 //pino medidor de fluxo
 
 
-const int RelePin = 9; //pino relé
+const int RelePin = 16; //pino relé
 
 long currentMillis = 0;
 long previousMillis = 0;
@@ -102,6 +102,8 @@ void teclado()
 		if (leitura == '1'){cond_valvula = true;}
     else if (leitura == '2'){volume_total -= 1000;}
     else if (leitura == '3'){volume_total +=1000 ;}
+    else if (leitura == '4'){ligar_valvula();}
+    else if (leitura == '5'){desligar_valvula();}
 	}
   switch (menu)
   {
@@ -223,7 +225,7 @@ void setup()
   Notification.setTitle("Dosadora");
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(SENSOR, INPUT_PULLUP);
-
+  pinMode(RelePin, OUTPUT);
   pulseCount = 0;
   flowRate = 0.0;
   volume = 0;
