@@ -29,6 +29,8 @@ unsigned long volume_valvula = 1000; // escolher o volume para abrir a valvula e
 char menu = 's';
 bool msg_conf1 = true;
 String texto;
+long currentMillis1 = 0;
+long previousMillis1 = 0;
 
 void medir_Fluxo()
 {
@@ -55,9 +57,10 @@ void medir_Fluxo()
       float porcentagem_valvula = (float(volume_total/1000)/float(volume_valvula))*100;
       Serial.print(porcentagem_valvula);
       Serial.println(" %");
-      unsigned long tempo_msg = currentMillis - previousMillis;
-      if (tempo_msg <= 200)
+      unsigned long tempo_msg = currentMillis1 - previousMillis1;
+      if (tempo_msg > 3000)
       {
+        previousMillis1 = millis();
         String texto = "[E] Enchendo: "+ String(float(volume_total/1000))+"L - " + String(float(volume_valvula))+"L / " + String(float(float((volume_total/1000))/float(volume_valvula))*100)+"% " + "(parar/pausar)";
         Terminal.print(texto);
         
@@ -176,11 +179,13 @@ void teclado()
     if (Terminal.compareString("pausar"))
     {
       Terminal.println("[*] Pausando o enchimento (continuar/parar)");
+      desligar_valvula();
       estado = 'n';
     }
     if (Terminal.compareString("continuar"))
     {
       Terminal.println("[*] Continuando o enchimento (parar/pausar)");
+      ligar_valvula();
       estado = 'e';
     }
 
@@ -238,6 +243,7 @@ void setup()
 void loop()
 {
   currentMillis = millis();
+  currentMillis1 = millis();
   Dabble.processInput(); 
   medir_Fluxo();
   teclado();
