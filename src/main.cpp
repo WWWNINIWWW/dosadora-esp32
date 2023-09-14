@@ -111,7 +111,7 @@ void teclado()
   switch (menu)
   {
     case 's':
-    if (Terminal.compareString("iniciar"))
+    if (Terminal.compareString("iniciar") || Terminal.compareString("Iniciar") || Terminal.compareString("iniciar ") || Terminal.compareString("Iniciar "))
     {
       Terminal.println("[*] Iniciando");
       Terminal.println("[*] Comando 'parar' realiza o cancelamento de qualquer operacao");
@@ -130,7 +130,7 @@ void teclado()
     {
       
       int msg = Terminal.readNumber();
-      if (Terminal.compareString("parar"))
+      if (Terminal.compareString("parar") || Terminal.compareString("parar ") || Terminal.compareString("Parar") || Terminal.compareString("Parar "))
       {
         Terminal.println("[P] Parando o processo de enchimento");
         menu = 's';
@@ -156,14 +156,14 @@ void teclado()
     case 'q':
       if (msg_conf1){Terminal.println("[Q] Tem Certeza do Volume? (s/n)"); msg_conf1 = false;}
       
-      if (Terminal.compareString("s"))
+      if (Terminal.compareString("s") || Terminal.compareString("S") || Terminal.compareString("s ")|| Terminal.compareString("S ") || Terminal.compareString("Sim") || Terminal.compareString("Sim ") || Terminal.compareString("sim") || Terminal.compareString("sim "))
       {
         msg_conf1 = true;
         cond_valvula = true; 
         Notification.setTitle("Dosadora - Enchimento em Andamento");
         menu ='n';
       }
-      else if (Terminal.compareString("n"))
+      else if (Terminal.compareString("n") || Terminal.compareString("N") || Terminal.compareString("n ") || Terminal.compareString("N ") || Terminal.compareString("nao") || Terminal.compareString("Nao") || Terminal.compareString("nao ") || Terminal.compareString("Nao ") || Terminal.compareString("não") || Terminal.compareString("não ") || Terminal.compareString("Não") || Terminal.compareString("Não "))
       {
         Terminal.println("[*] Digite o volume a ser enchido: (0 - 999)");
         msg_conf1 = true;
@@ -172,17 +172,17 @@ void teclado()
         
     break;
     case 'n':
-    if (Terminal.compareString("parar"))
+    if (Terminal.compareString("parar") || Terminal.compareString("parar ") || Terminal.compareString("Parar") || Terminal.compareString("Parar "))
     {
       menu = 'w';
     }
-    if (Terminal.compareString("pausar"))
+    if (Terminal.compareString("pausar") || Terminal.compareString("pausar ") || Terminal.compareString("Pausar") || Terminal.compareString("Pausar "))
     {
       Terminal.println("[*] Pausando o enchimento (continuar/parar)");
       desligar_valvula();
       estado = 'n';
     }
-    if (Terminal.compareString("continuar"))
+    if (Terminal.compareString("continuar") || Terminal.compareString("continuar ") || Terminal.compareString("Continuar") || Terminal.compareString("Continuar "))
     {
       Terminal.println("[*] Continuando o enchimento (parar/pausar)");
       ligar_valvula();
@@ -194,14 +194,14 @@ void teclado()
     case 'w':
     if (msg_conf1){Terminal.println("[Q] Tem Certeza que deseja parar? (s/n)"); msg_conf1 = false;}
       
-      if (Terminal.compareString("s"))
+      if (Terminal.compareString("s") || Terminal.compareString("S") || Terminal.compareString("s ")|| Terminal.compareString("S ") || Terminal.compareString("Sim") || Terminal.compareString("Sim ") || Terminal.compareString("sim") || Terminal.compareString("sim "))
       {
         Terminal.println("[P] Parando o enchimento");
         msg_conf1 = true;
         cond_valvula = false;
         menu ='s';
       }
-      else if (Terminal.compareString("n"))
+      else if (Terminal.compareString("n") || Terminal.compareString("N") || Terminal.compareString("n ") || Terminal.compareString("N ") || Terminal.compareString("nao") || Terminal.compareString("Nao") || Terminal.compareString("nao ") || Terminal.compareString("Nao ") || Terminal.compareString("não") || Terminal.compareString("não ") || Terminal.compareString("Não") || Terminal.compareString("Não "))
       {
         if (estado == 'e')
         {
