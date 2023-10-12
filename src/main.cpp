@@ -16,7 +16,7 @@ long currentMillis = 0;
 long previousMillis = 0;
 int interval = 1000;
 boolean ledState = LOW;
-float calibrationFactor = 4.5;
+float calibrationFactor = 6.6 ;  //fator de calibração do medidor de vazao
 volatile byte pulseCount;
 byte pulse1Sec = 0;
 float flowRate;
@@ -114,7 +114,9 @@ void teclado()
     if (Terminal.compareString("iniciar") || Terminal.compareString("Iniciar") || Terminal.compareString("iniciar ") || Terminal.compareString("Iniciar "))
     {
       Terminal.println("[*] Iniciando");
+      delay(0.1);
       Terminal.println("[*] Comando 'parar' realiza o cancelamento de qualquer operacao");
+      delay(0.1);
       Terminal.println("[*] Digite o volume a ser enchido: (0 - 999)");
       menu = 'l';
     }
@@ -138,7 +140,7 @@ void teclado()
       }
       else if(msg <= 999 && msg >=0)
       {
-        volume_valvula = float(msg);
+        volume_valvula = static_cast<unsigned long>(float(msg)); 
 
         menu ='q';
       }
